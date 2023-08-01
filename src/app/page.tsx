@@ -1,9 +1,38 @@
-import Image from 'next/image'
+import Link from 'next/link';
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
 
-export default function Home() {
+async function getTasks() {
+  const todos = prisma.todoItem.findMany();
+
+  return todos
+}
+
+async function createTask(data: FormData){
+  'use server'
+  console.log('test')
+}
+
+export default async function Home() {
+  const todos = await getTasks()
+
+  
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1>Hello there man</h1>
-    </main>
-  )
+    <>
+
+      <section className='grow flex justify-end px-[30px] items-center' >
+        <Link href="/tasks/new"><button className='border h-[70px] w-[70px] bg-white text-4xl rounded-[50%] drop-shadow-lg transition-all hover:scale-110'>+</button></Link>
+      </section>
+      
+      <main className="grow-[20] flex flex-col justify-center items-center" >
+
+        <p className='text-3xl font-medium' >Tasks</p>
+        <ul>
+          <li>{todos.map((t) => t.task)}</li>
+        </ul>
+
+      </main>
+    </>
+  );
 }
